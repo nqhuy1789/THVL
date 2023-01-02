@@ -1,0 +1,4 @@
+pandas==1.4.3
+Pillow==9.4.0
+streamlit==1.14.0
+underthesea==6.0.0
