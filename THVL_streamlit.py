@@ -57,67 +57,16 @@ def Search_string(search_string, source_string):
             result.append(str)
     return iCounter, result
 
-def Load_Segment(data_segment, sLink):
-    for segment_idx in range(data_segment.shape[0]):
-        thumbnail_list = []
-        filenames = (data_segment.iloc[segment_idx]['Thumbnails']).split(',')
-        segment_start = data_segment.iloc[segment_idx]['Start']
-        segment_end = data_segment.iloc[segment_idx]['End']
-        start = int(segment_start[0:2]) * 3600 + int(segment_start[3:5]) * 60 + int(segment_start[6:8]) + int(segment_start[9:12]) // 1000 
-        end = int(segment_end[0:2]) * 3600 + int(segment_end[3:5]) * 60 + int(segment_end[6:8]) + int(segment_end[9:12]) // 1000
-        image_link = sLink + "?autoplay=1&" + 'start=' + str(start) + '&end=' + str(end)
-        for filename in filenames:
-            thumbnail_list.append(Dir_path+'/'+filename)
-        cols = cycle(st.columns(4)) 
-        for idx, filteredImage in enumerate(thumbnail_list):
-            displayimage = Image.open(filteredImage)
-            next(cols).image(displayimage, width=150)
-        st.write('[{}] - [{}] : {} [link](%s)'.format(segment_start, segment_end, data_segment.iloc[segment_idx]['Description'])  % image_link)
-
-def Load_Thumbnail(data, sLink, search_string):
-    results = Search_thumbnail(search_string)
-    search_string = preprocess_search_string(search_string)
-    image_list = []
-    image_caption = []
-    image_description = []
-    image_link = []
-    for index in range(1, data.shape[0]):
-        scene_keywords = data.iloc[index]['Keywords']
-        scene_start = data.iloc[index]['Start']
-        scene_end = data.iloc[index]['End']
-        iCounter, result = Search_string(search_string, scene_keywords)
-        if iCounter > 0: 
-            image_list.append(Dir_path+'/'+list_file[index-1])
-            image_caption.append('[{}] - [{}] : Từ khóa: {}'.format(scene_start, scene_end, ','.join(result)))
-            image_description.append(data.iloc[index]['Description'])
-            start = int(scene_start[0:2]) * 3600 + int(scene_start[3:5]) * 60 + int(scene_start[6:8]) + int(scene_start[9:12]) // 1000 
-            end = int(scene_end[0:2]) * 3600 + int(scene_end[3:5]) * 60 + int(scene_end[6:8]) + int(scene_end[9:12]) // 1000
-            image_link.append(sLink + "?autoplay=1&" + 'start=' + str(start) + '&end=' + str(end))
-    
-    for result in results:
-        # result[0], list_file[result[1][0]-1][result[1][4]-1]
-        displayimage = Image.open(list_file[result[1][0]-1][result[1][4]-1])
-        st.image(displayimage)
-        scene_start = result[1][2]
-        scene_end = result[1][3]
-        start = int(scene_start[0:2]) * 3600 + int(scene_start[3:5]) * 60 + int(scene_start[6:8]) + int(scene_start[9:12]) // 1000
-        end = int(scene_end[0:2]) * 3600 + int(scene_end[3:5]) * 60 + int(scene_end[6:8]) + int(scene_end[9:12]) // 1000
-        image_link = sLink + "?autoplay=1&" + 'start=' + str(start) + '&end=' + str(end)
-        st.write("{} [link](%s)".format(result[0]) % image_link[idx])
-
-    for idx, filteredImage in enumerate(image_list):
-        displayimage = Image.open(filteredImage)
-        st.image(displayimage)
-        st.write("{} [link](%s)".format(image_caption[idx]) % image_link[idx])
-
 def Load_Description(file_index, frame_index):
-    sPath = r'G:\My Drive\44 - AI\2 - Photo\THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '
+    # sPath = r'G:\My Drive\44 - AI\2 - Photo\THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '
+    sPath = './THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '
     data = pd.read_csv(sPath + str(file_index) + '/' + 'THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '+ str(file_index) + '.csv')
     return data.iloc[frame_index]['Description']
 
-def Load_Lexicon(sFilname, file_index):
+def Load_Lexicon(file_index):
     iPosition = 1
-    sPath = r'G:\My Drive\44 - AI\2 - Photo\THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '
+    # sPath = r'G:\My Drive\44 - AI\2 - Photo\THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '
+    sPath = './THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '
     data = pd.read_csv(sPath + str(file_index) + '/' + 'THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập '+ str(file_index) + '.csv').dropna()
     for i in range(1,len(data)):
         scene_keywords = data.iloc[i]['Keywords']
@@ -133,7 +82,8 @@ def Load_Lexicon(sFilname, file_index):
     return lexicon
 
 def Load_listfile(list_file, file_index):
-    sPath = r'G:\My Drive\44 - AI\2 - Photo\THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập ' + str(file_index)
+    # sPath = r'G:\My Drive\44 - AI\2 - Photo\THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập ' + str(file_index)
+    sPath = './THVL _ Phim tài liệu_ Nam Bộ xưa và nay - Tập ' + str(file_index)
     temp = []
     for path in os.scandir(sPath):
         if (path.is_file()) and (path.name[-4:]=='.jpg'):
